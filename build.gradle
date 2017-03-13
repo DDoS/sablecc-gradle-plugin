@@ -1,0 +1,57 @@
+// Default tasks
+defaultTasks 'build', 'shadowJar'
+
+// Apply plugins
+apply plugin: 'java'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+// Basic project information
+group = 'ca.sapon'
+archivesBaseName = 'sablecc-gradle-plugin'
+version = '0.0.1-SNAPSHOT'
+
+// Minimum version of Java required
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+// Plugin repositories and dependencies
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+// Non-plugin repositories and dependencies
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+dependencies {
+    gradleApi()
+    compile 'com.peterlavalle:sablecc-maven.sablecc:3.7'
+    compile 'org.codehaus.plexus:plexus-compiler-api:2.1'
+    compile 'plexus:plexus-utils:1.0.3'
+
+}
+
+// Include dependencies in final JAR
+shadowJar {
+    dependencies {
+        include dependency('com.peterlavalle:sablecc-maven.sablecc')
+        include dependency('org.codehaus.plexus:plexus-compiler-api')
+        include dependency('plexus:plexus-utils:1.0.3')
+
+    }
+}
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs << '-Xlint:all'
+    options.compilerArgs << '-Xlint:-path'
+    options.deprecation = true
+}
